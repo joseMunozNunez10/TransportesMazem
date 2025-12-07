@@ -20,23 +20,16 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y lftp
 
       - name: 📂 Deploy via FTP
-        env:
-          FTP_HOST: ${{ secrets.FTP_SERVER }}
-          FTP_USER: ${{ secrets.FTP_USERNAME }}
-          FTP_PASS: ${{ secrets.FTP_PASSWORD }}
-        run: |
-          lftp -d -c "
-          set ftp:ssl-allow no;
-          set ftp:ssl-force false;
-          set ssl:verify-certificate no;
-          set ftp:passive-mode on;
-          set net:timeout 60;
-          set net:max-retries 5;
-          set net:reconnect-interval-base 5;
-          set net:reconnect-interval-multiplier 1;
-          open -u $FTP_USER,$FTP_PASS ftp://$FTP_HOST;
-          lcd ./html;
-          cd /public_html;
-          mirror --reverse --delete --verbose --parallel=3 --use-cache;
-          bye;
-          "
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./html/
+          server-dir: /public_html/
+          protocol: ftp
+          port: 21
+          timeout: 600000
+          log-level: verbose
+          security: loose
+          dangerous-clean-slate: false
