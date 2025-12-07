@@ -25,8 +25,10 @@
         $("body").addClass("loaded");
         // Remove preloader from DOM after animation
         setTimeout(function() {
-            $(".preloader").remove();
-        }, 500);
+            $(".site-preloader").fadeOut(500, function() {
+                $(this).remove();
+            });
+        }, 300);
     });
 
     $(document).ready(function () {
