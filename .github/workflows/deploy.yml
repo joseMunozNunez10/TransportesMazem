@@ -10,6 +10,7 @@ jobs:
   deploy:
     name: 🎯 Deploy to transportesmazem.cl
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     
     steps:
       - name: 🚚 Get latest code
@@ -23,9 +24,9 @@ jobs:
           user: ${{ secrets.FTP_USERNAME }}
           pass: ${{ secrets.FTP_PASSWORD }}
           onlyNewer: true
-          settings: 'set ftp:ssl-allow no; set ftp:passive-mode on'
+          settings: 'set ftp:ssl-allow no; set ftp:passive-mode on; set net:timeout 30; set net:max-retries 3; set net:reconnect-interval-base 5'
           localDir: './html/'
           remoteDir: '/public_html/'
           reverse: true
           ignoreFile: '.lftp_ignore'
-          options: '--verbose'
+          options: '--verbose --parallel=2'
