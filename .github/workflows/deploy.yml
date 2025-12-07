@@ -24,9 +24,9 @@ jobs:
           user: ${{ secrets.FTP_USERNAME }}
           pass: ${{ secrets.FTP_PASSWORD }}
           onlyNewer: true
-          settings: 'set ftp:ssl-allow no; set ftp:passive-mode on; set net:timeout 30; set net:max-retries 3; set net:reconnect-interval-base 5'
+          settings: 'set ftp:ssl-allow false; set ftp:passive-mode true; set net:timeout 30; set net:max-retries 3'
           localDir: './html/'
           remoteDir: '/public_html/'
           reverse: true
           ignoreFile: '.lftp_ignore'
-          options: '--verbose --parallel=2'
+          options: '--verbose'
