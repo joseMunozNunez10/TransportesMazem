@@ -19,7 +19,7 @@ jobs:
       - name: 📦 Install LFTP
         run: sudo apt-get update && sudo apt-get install -y lftp
 
-      - name: 📂 Deploy via FTP
+      - name: 📂 Deploy via SFTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -27,9 +27,5 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./html/
           server-dir: /public_html/
-          protocol: ftp
+          protocol: ftps
           port: 21
-          timeout: 600000
-          log-level: verbose
-          security: loose
-          dangerous-clean-slate: false
