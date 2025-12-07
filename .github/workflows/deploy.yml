@@ -25,12 +25,18 @@ jobs:
           FTP_USER: ${{ secrets.FTP_USERNAME }}
           FTP_PASS: ${{ secrets.FTP_PASSWORD }}
         run: |
-          lftp -c "
+          lftp -d -c "
           set ftp:ssl-allow no;
+          set ftp:ssl-force false;
+          set ssl:verify-certificate no;
           set ftp:passive-mode on;
-          set net:timeout 30;
-          set net:max-retries 3;
-          open -u $FTP_USER,$FTP_PASS $FTP_HOST;
-          mirror --reverse --delete --verbose --only-newer ./html/ /public_html/;
+          set net:timeout 60;
+          set net:max-retries 5;
+          set net:reconnect-interval-base 5;
+          set net:reconnect-interval-multiplier 1;
+          open -u $FTP_USER,$FTP_PASS ftp://$FTP_HOST;
+          lcd ./html;
+          cd /public_html;
+          mirror --reverse --delete --verbose --parallel=3 --use-cache;
           bye;
           "
