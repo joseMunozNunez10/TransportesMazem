@@ -16,17 +16,21 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
 
+      - name: 📦 Install LFTP
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
       - name: 📂 Deploy via FTP
-        uses: pressidium/lftp-mirror-action@v1
-        with:
-          host: ${{ secrets.FTP_SERVER }}
-          port: 21
-          user: ${{ secrets.FTP_USERNAME }}
-          pass: ${{ secrets.FTP_PASSWORD }}
-          onlyNewer: true
-          settings: 'set ftp:ssl-allow false; set ftp:passive-mode true; set net:timeout 30; set net:max-retries 3'
-          localDir: './html/'
-          remoteDir: '/public_html/'
-          reverse: true
-          ignoreFile: '.lftp_ignore'
-          options: '--verbose'
+        env:
+          FTP_HOST: ${{ secrets.FTP_SERVER }}
+          FTP_USER: ${{ secrets.FTP_USERNAME }}
+          FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          lftp -c "
+          set ftp:ssl-allow no;
+          set ftp:passive-mode on;
+          set net:timeout 30;
+          set net:max-retries 3;
+          open -u $FTP_USER,$FTP_PASS $FTP_HOST;
+          mirror --reverse --delete --verbose --only-newer ./html/ /public_html/;
+          bye;
+          "
