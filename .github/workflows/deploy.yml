@@ -17,16 +17,17 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: 📂 Sync files to Hostgator via FTP
+      - name: 📂 Sync files to Hostgator via FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
-          protocol: ftp
+          protocol: ftps
+          security: loose
           local-dir: ./html/
-          server-dir: ./public_html/
+          server-dir: /public_html/
           dangerous-clean-slate: false
           timeout: 300000
           log-level: verbose
