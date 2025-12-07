@@ -14,27 +14,18 @@ jobs:
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
 
-      - name: 📂 Sync files to Hostgator via FTPS
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: 📂 Deploy via FTP
+        uses: pressidium/lftp-mirror-action@v1
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          host: ${{ secrets.FTP_SERVER }}
           port: 21
-          protocol: ftps
-          security: loose
-          local-dir: ./html/
-          server-dir: /public_html/
-          dangerous-clean-slate: false
-          timeout: 300000
-          log-level: verbose
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.DS_Store
-            **/Thumbs.db
-            **/*.log
+          user: ${{ secrets.FTP_USERNAME }}
+          pass: ${{ secrets.FTP_PASSWORD }}
+          onlyNewer: true
+          settings: 'set ftp:ssl-allow no; set ftp:passive-mode on'
+          localDir: './html/'
+          remoteDir: '/public_html/'
+          reverse: true
+          ignoreFile: '.lftp_ignore'
+          options: '--verbose'
